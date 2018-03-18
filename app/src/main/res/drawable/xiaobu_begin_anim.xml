@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false" >
+
+    <item
+        android:drawable="@drawable/xiaobu_begin_01"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_02"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_03"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_04"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_05"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_06"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_07"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_08"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_09"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_10"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_11"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_12"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_13"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_14"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_15"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/xiaobu_begin_16"
+        android:duration="40"/>
+</animation-list>
