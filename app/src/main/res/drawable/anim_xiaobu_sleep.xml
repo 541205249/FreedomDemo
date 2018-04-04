@@ -3,99 +3,276 @@
     android:oneshot="false" >
 
     <item
+        android:drawable="@drawable/xiaobu_sleep_00"
+        android:duration="33"/>
+    <item
         android:drawable="@drawable/xiaobu_sleep_01"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_02"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_03"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_04"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_05"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_06"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_07"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_08"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_09"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_10"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_11"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_12"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_13"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_14"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_15"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_16"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_17"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_18"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_19"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_20"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_21"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_22"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_23"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_24"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_25"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_26"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_27"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_28"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_29"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_30"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_31"
-        android:duration="40"/>
+        android:duration="33"/>
     <item
         android:drawable="@drawable/xiaobu_sleep_32"
-        android:duration="40"/>
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_33"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_34"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_35"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_36"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_37"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_38"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_39"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_40"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_41"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_42"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_43"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_44"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_45"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_46"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_47"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_48"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_49"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_50"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_51"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_52"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_53"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_54"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_55"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_56"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_57"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_58"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_59"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_60"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_61"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_62"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_63"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_64"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_65"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_66"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_67"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_68"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_69"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_70"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_71"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_72"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_73"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_74"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_75"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_76"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_77"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_78"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_79"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_80"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_81"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_82"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_83"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_84"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_85"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_86"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_87"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_88"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_89"
+        android:duration="33"/>
+    <item
+        android:drawable="@drawable/xiaobu_sleep_90"
+        android:duration="33"/>
 </animation-list>

@@ -44,102 +44,57 @@ public class FrameAnim {
     private int mDrawableResId;
     private ImageView mImageView;
     private OnAnimListener mOnAnimListener;
+
     private boolean isLoop;
     private boolean isRunning = true;
 
-    public FrameAnim(@DrawableRes final int drawableResId, @NonNull final ImageView imageView) {
+    FrameAnim(@DrawableRes final int drawableResId, @NonNull final ImageView imageView) {
         setDrawableRes(drawableResId);
         mImageView = imageView;
     }
 
-    public void setDrawableRes(@DrawableRes final int drawableResId) {
+    void setDrawableRes(@DrawableRes final int drawableResId) {
         mDrawableResId = drawableResId;
     }
 
-    public void setOnAnimListener(final OnAnimListener onAnimListener) {
+    void setOnAnimListener(final OnAnimListener onAnimListener) {
         mOnAnimListener = onAnimListener;
     }
 
-    public void setIsLoop(boolean isLoop) {
+    boolean isLoop() {
+        return isLoop;
+    }
+
+    void setIsLoop(boolean isLoop) {
         this.isLoop = isLoop;
     }
 
     public void start() {
         isRunning = true;
-        loadFromXml(mDrawableResId, mImageView.getContext(), new OnDrawableLoadedListener() {
-            @Override
-            public void onDrawableLoaded(List<FrameData> frameData) {
-                if (mOnAnimListener != null) {
-                    mOnAnimListener.onStart();
-                }
-
-                animateRawManually(frameData, mImageView);
+        loadFromXml(mDrawableResId, mImageView.getContext(), frameData -> {
+            if (mOnAnimListener != null) {
+                mOnAnimListener.onStart();
             }
+
+            animateRawManually(frameData, mImageView);
         });
     }
 
-    public void stop() {
+    void stop() {
         isRunning = false;
     }
 
     private void loadFromXml(final int resourceId, final Context context,
                              final OnDrawableLoadedListener onDrawableLoadedListener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final List<FrameData> frames = geFrames(context, resourceId);
+        new Thread(() -> {
+            final List<FrameData> frames = geFrames(context, resourceId);
 
-                new Handler(context.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (onDrawableLoadedListener != null) {
-                            onDrawableLoadedListener.onDrawableLoaded(frames);
-                        }
-                    }
-                });
-            }
-        }).run();
-    }
-
-    @NonNull
-    private List<FrameData> geFrames(Context context, int resourceId) {
-        final List<FrameData> frames = new ArrayList<>();
-        XmlResourceParser parser = context.getResources().getXml(resourceId);
-        try {
-            int eventType = parser.getEventType();
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                if (eventType == XmlPullParser.START_DOCUMENT) {
-                    Log.d(TAG, "START_DOCUMENT");
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    if (parser.getName().equals("item")) {
-                        byte[] bytes = null;
-                        int duration = 1000;
-                        for (int i = 0; i < parser.getAttributeCount(); i++) {
-                            if (parser.getAttributeName(i).equals("drawable")) {
-                                int resId = Integer.parseInt(parser.getAttributeValue(i).substring(1));
-                                bytes = toByteArray(context.getResources().openRawResource(resId));
-                            } else if (parser.getAttributeName(i)
-                                    .equals("duration")) {
-                                duration = parser.getAttributeIntValue(
-                                        i, 1000);
-                            }
-                        }
-                        FrameData frameData = new FrameData();
-                        frameData.bytes = bytes;
-                        frameData.duration = duration;
-                        frames.add(frameData);
-                    }
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    Log.d(TAG, "END_TAG");
-                } else if (eventType == XmlPullParser.TEXT) {
-                    Log.d(TAG, "TEXT");
+            new Handler(context.getMainLooper()).post(() -> {
+                if (onDrawableLoadedListener != null) {
+                    onDrawableLoadedListener.onDrawableLoaded(frames);
                 }
-                eventType = parser.next();
-            }
-        } catch (IOException | XmlPullParserException e) {
-            e.printStackTrace();
-        }
-        return frames;
+            });
+        }).run();
     }
 
     private void animateRawManually(List<FrameData> frameData, ImageView imageView) {
@@ -165,24 +120,15 @@ public class FrameAnim {
         imageView.setImageDrawable(thisFrame.drawable);
 
         final int frameListSize = frameList.size();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Make sure ImageView hasn't been changed to a different Image
-                // in this time
-                loadCurrentFrame(imageView, thisFrame, frameListSize, currentFrameIndex, frameList);
-            }
+        new Handler().postDelayed(() -> {
+            // Make sure ImageView hasn't been changed to a different Image
+            // in this time
+            loadCurrentFrame(imageView, thisFrame, frameListSize, currentFrameIndex, frameList);
         }, thisFrame.duration);
 
         // Load next frame
         if (hasNextFrame(frameListSize, currentFrameIndex)) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    loadNextFrame(frameList, currentFrameIndex, imageView);
-
-                }
-            }).run();
+            new Thread(() -> loadNextFrame(frameList, currentFrameIndex, imageView)).run();
         }
     }
 
@@ -222,6 +168,52 @@ public class FrameAnim {
 
     private boolean hasNextFrame(int frameListSize, int currentFrameIndex) {
         return currentFrameIndex < frameListSize - 1;
+    }
+
+    @NonNull
+    private List<FrameData> geFrames(Context context, int resourceId) {
+        final List<FrameData> frames = new ArrayList<>();
+        XmlResourceParser parser = context.getResources().getXml(resourceId);
+        try {
+            int eventType = parser.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                if (eventType == XmlPullParser.START_DOCUMENT) {
+                    Log.d(TAG, "START_DOCUMENT");
+                } else if (eventType == XmlPullParser.START_TAG) {
+                    getDrawableItem(context, frames, parser);
+                } else if (eventType == XmlPullParser.END_TAG) {
+                    Log.d(TAG, "END_TAG");
+                } else if (eventType == XmlPullParser.TEXT) {
+                    Log.d(TAG, "TEXT");
+                }
+                eventType = parser.next();
+            }
+        } catch (IOException | XmlPullParserException e) {
+            e.printStackTrace();
+        }
+        return frames;
+    }
+
+    private void getDrawableItem(Context context, List<FrameData> frames, XmlResourceParser parser) throws IOException {
+        if (!parser.getName().equals("item")) {
+            return;
+        }
+        byte[] bytes = null;
+        int duration = 1000;
+        for (int i = 0; i < parser.getAttributeCount(); i++) {
+            if (parser.getAttributeName(i).equals("drawable")) {
+                int resId = Integer.parseInt(parser.getAttributeValue(i).substring(1));
+                bytes = toByteArray(context.getResources().openRawResource(resId));
+            } else if (parser.getAttributeName(i)
+                    .equals("duration")) {
+                duration = parser.getAttributeIntValue(
+                        i, 1000);
+            }
+        }
+        FrameData frameData = new FrameData();
+        frameData.bytes = bytes;
+        frameData.duration = duration;
+        frames.add(frameData);
     }
 
     private void recycleBitmap(List<FrameData> frameList, int currentFrameIndex) {

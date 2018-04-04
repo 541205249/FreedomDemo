@@ -1,21 +1,23 @@
 package com.jiazy.freedomdemo.frameanimation;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
-import com.jiazy.freedomdemo.R;
+import com.jiazy.freedomdemo.frameanimation.anim.AnimQueueView;
 
-public class AvatarView extends ImageView {
+import static com.jiazy.freedomdemo.frameanimation.anim.AnimQueueDrawable.STATUS_INFINITE;
+import static com.jiazy.freedomdemo.frameanimation.anim.AnimQueueDrawable.STATUS_ONESHOT;
 
-    public static final int STATE_SILENCE = 0x00; //xiumian
-    public static final int STATE_RECOGNIZE = 0x01; //luru
-    public static final int STATE_SEARCH = 0x02; //qishi
-    public static final int STATE_RESULT = 0x03; //
+public class AvatarView extends AnimQueueView {
+
+    public static final int STATE_SILENCE = 0x00;
+    public static final int STATE_RECOGNIZE = 0x01;
+    public static final int STATE_RECOGNIZE2 = 0x02;
+    public static final int STATE_RESULT = 0x03;
     public static final int STATE_ERROR = 0x04;
+    public static final int STATE_AWAKEN = 0x05;
     private int mCurrentSate = -1;
-
-    private FrameAnim mFrameAnim;
 
     public AvatarView(Context context) {
         super(context);
@@ -33,61 +35,48 @@ public class AvatarView extends ImageView {
     }
 
     private void init() {
-        switchState(STATE_SILENCE);
-        initAnim();
+        new Handler().post(() -> {
+            setParams("xiaobu_sleep", 91, STATUS_INFINITE, 60);
+            mDrawable.setAnimationListener(drawable -> {
+                if (mCurrentSate == STATE_RESULT || mCurrentSate == STATE_ERROR) {
+                    switchState(STATE_SILENCE);
+                }if (mCurrentSate == STATE_RECOGNIZE) {
+                    switchState(STATE_RECOGNIZE2);
+                }
+            });
+        });
+    }
+
+    public void stop() {
+        if (mDrawable != null) {
+            mDrawable.stop();
+        }
     }
 
     public void switchState(int state) {
-        if (mCurrentSate != state) {
-            mCurrentSate = state;
-        } else {
+        if (mDrawable == null) {
             return;
         }
 
-        switch (mCurrentSate) {
+        mCurrentSate = state;
+        switch (state) {
             case STATE_SILENCE:
-                mFrameAnim.setDrawableRes(R.drawable.anim_xiaobu_sleep);
-                mFrameAnim.setIsLoop(true);
+                setParams("xiaobu_sleep", 91, STATUS_INFINITE, 60);
                 break;
             case STATE_RECOGNIZE:
-                mFrameAnim.setDrawableRes(R.drawable.anim_xiaobu_begin);
-                mFrameAnim.setIsLoop(true);
+                setParams("xiaobu_awaken", 23, STATUS_ONESHOT, 80);
                 break;
-            case STATE_SEARCH:
-                mFrameAnim.setDrawableRes(R.drawable.anim_xiaobu_search_start);
-                mFrameAnim.setIsLoop(true);
+            case STATE_RECOGNIZE2:
+                setParams("xiaobu_input_search", 53, STATUS_INFINITE, 60);
                 break;
             case STATE_RESULT:
-                mFrameAnim.setDrawableRes(R.drawable.anim_xiaobu_begin);
-                mFrameAnim.setIsLoop(true);
-                break;
             case STATE_ERROR:
-                mFrameAnim.setDrawableRes(R.drawable.anim_xiaobu_begin);
-                mFrameAnim.setIsLoop(false);
+                setParams("xiaobu_result", 52, STATUS_ONESHOT, 80);
+                break;
+            case STATE_AWAKEN:
+                setParams("xiaobu_awaken", 23, STATUS_ONESHOT, 60);
                 break;
         }
-
-        mFrameAnim.start();
     }
 
-    private void initAnim() {
-        mFrameAnim = new FrameAnim(R.drawable.anim_xiaobu_begin, this);
-        mFrameAnim.setIsLoop(true);
-        mFrameAnim.setOnAnimListener(new FrameAnim.OnAnimListener() {
-            @Override
-            public void onStart() {
-//                Log.d(TAG, "onStart");
-            }
-
-            @Override
-            public void onEnd() {
-//                Log.d(TAG, "onEnd");
-            }
-
-            @Override
-            public void onStop() {
-
-            }
-        });
-    }
 }

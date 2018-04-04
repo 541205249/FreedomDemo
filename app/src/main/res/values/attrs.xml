@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AnimationQueueView">
+        <attr name="resname" format="string" />
+        <attr name="framecount" format="integer" />
+        <attr name="repeatmode" format="integer" />
+        <attr name="interval" format="integer" />
+        <attr name="fps" format="integer" />
+    </declare-styleable>
+
+</resources>

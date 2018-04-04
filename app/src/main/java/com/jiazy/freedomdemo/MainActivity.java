@@ -1,65 +1,45 @@
 package com.jiazy.freedomdemo;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 
-import com.jiazy.freedomdemo.frameanimation.FrameAnim;
+import com.jiazy.freedomdemo.excel.TestExcelActivity;
+import com.jiazy.freedomdemo.frameanimation.FastBitmapAnimActivity;
+import com.jiazy.freedomdemo.lottie.LottieActivity;
+import com.jiazy.freedomdemo.retrofit.RetrofitActivity;
 
-public class MainActivity extends Activity {
-    private static final String TAG = MainActivity.class.getClass().getSimpleName();
+public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle("主页面");
+    }
 
-        ImageView imageView = findViewById(R.id.img);
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent();
+        switch (v.getId()) {
+            case R.id.btn_excel:
+                intent.setClass(this, TestExcelActivity.class);
+                break;
+            case R.id.btn_frame_anim:
+                intent.setClass(this, FastBitmapAnimActivity.class);
+                break;
+            case R.id.btn_lottie:
+                intent.setClass(this, LottieActivity.class);
+                break;
+            case R.id.btn_retrofit:
+                intent.setClass(this, RetrofitActivity.class);
+                break;
+            default:
+                intent.setClass(this, TestExcelActivity.class);
+                break;
+        }
 
-        final FrameAnim frameAnim = new FrameAnim(R.drawable.anim_xiaobu_begin, imageView);
-        frameAnim.setIsLoop(true);
-        frameAnim.setOnAnimListener(new FrameAnim.OnAnimListener() {
-            @Override
-            public void onStart() {
-                Log.d(TAG, "onStart");
-            }
-
-            @Override
-            public void onEnd() {
-                Log.d(TAG, "onEnd");
-            }
-
-            @Override
-            public void onStop() {
-
-            }
-        });
-
-        findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                frameAnim.stop();
-            }
-        });
-
-        findViewById(R.id.btn2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                frameAnim.setDrawableRes(R.drawable.anim_xiaobu_begin);
-                frameAnim.setIsLoop(false);
-                frameAnim.start();
-            }
-        });
-
-        findViewById(R.id.btn3).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                frameAnim.setDrawableRes(R.drawable.anim_xiaobu_search_start);
-                frameAnim.setIsLoop(true);
-                frameAnim.start();
-            }
-        });
+        startActivity(intent);
     }
 }
