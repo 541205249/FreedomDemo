@@ -1,11 +1,12 @@
 package com.jiazy.freedomdemo.frameanimation.anim;
 
-/**
- * 作者： jiazy
- * 日期： 2018/2/28.
- * 公司： 步步高教育电子有限公司
- * 描述：主要对图片的透明区域做了点击事件拦截，点击不透明区域才响应事件，透明区域不响应事件
+/*
+  作者： jiazy
+  日期： 2018/2/28.
+  公司： 步步高教育电子有限公司
+  描述：主要对图片的透明区域做了点击事件拦截，点击不透明区域才响应事件，透明区域不响应事件
  */
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
@@ -25,13 +26,11 @@ public class IrregularImageView extends android.support.v7.widget.AppCompatImage
         super(context, attrs, defStyle);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (isTransparent(event)) {
-            return false; // 点击了透明区域，则向下传递给底层的控件，当前控件不响应点击事件
-        } else {
-            return super.onTouchEvent(event);
-        }
+        // 点击了透明区域，则向下传递给底层的控件，当前控件不响应点击事件
+        return !isTransparent(event) && super.onTouchEvent(event);
     }
 
     /**

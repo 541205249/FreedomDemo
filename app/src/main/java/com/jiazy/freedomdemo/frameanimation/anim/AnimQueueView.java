@@ -5,22 +5,18 @@ import android.util.AttributeSet;
 
 public class AnimQueueView extends IrregularImageView {
 
-    protected AnimQueueDrawable mDrawable;
-    private Context mContext;
+    public AnimQueueDrawable mDrawable;
 
     public AnimQueueView(Context context) {
         super(context);
-        mContext = context;
     }
 
     public AnimQueueView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mContext = context;
     }
 
     public AnimQueueView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
     }
 
     public void setParams(String resName, int frameCount, int repeatMode, int fps) {
@@ -36,14 +32,13 @@ public class AnimQueueView extends IrregularImageView {
         super.onDetachedFromWindow();
         if (mDrawable != null) {
             mDrawable.stop();
+            //解除与activity的绑定，防止内存泄漏
+            mDrawable.clear();
         }
     }
 
     public boolean isRunning() {
-        if (mDrawable != null) {
-            return mDrawable.isRunning();
-        }
-        return false;
+        return mDrawable != null && mDrawable.isRunning();
     }
 
     public void start() {

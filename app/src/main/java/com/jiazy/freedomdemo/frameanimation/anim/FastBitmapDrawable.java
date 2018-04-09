@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 
 public class FastBitmapDrawable extends Drawable {
     private Bitmap mBitmap;
@@ -18,7 +19,7 @@ public class FastBitmapDrawable extends Drawable {
 
     private boolean mIsDrawShadow = false;
 
-    public FastBitmapDrawable(Bitmap b) {
+    FastBitmapDrawable(Bitmap b) {
         mAlpha = 255;
         mBitmap = b;
         if (b != null) {
@@ -30,7 +31,7 @@ public class FastBitmapDrawable extends Drawable {
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(@NonNull Canvas canvas) {
         final Rect r = getBounds();
         canvas.save();
         canvas.scale(mScale, mScale);

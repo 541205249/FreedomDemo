@@ -17,7 +17,9 @@ public class FastBitmapAnimActivity extends Activity {
 
         mAvatarView = findViewById(R.id.img);
 
-        findViewById(R.id.btn).setOnClickListener(v -> mAvatarView.stop());
+        findViewById(R.id.btn_start).setOnClickListener(v -> mAvatarView.start());
+
+        findViewById(R.id.btn_stop).setOnClickListener(v -> mAvatarView.stop());
 
         findViewById(R.id.btn_recon).setOnClickListener(v -> mAvatarView.switchState(AvatarView.STATE_RECOGNIZE));
 

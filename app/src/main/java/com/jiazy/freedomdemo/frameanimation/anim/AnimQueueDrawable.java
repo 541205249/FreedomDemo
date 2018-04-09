@@ -10,9 +10,10 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.view.View;
 
-import com.eebbk.bfc.common.devices.DisplayUtils;
+import com.jiazy.freedomdemo.R;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -20,14 +21,12 @@ import java.util.concurrent.Executors;
 
 public class AnimQueueDrawable extends Drawable implements Runnable {
 
-    public static boolean sLock = false;
-
     public static final int STATUS_INFINITE = -1;
     public static final int STATUS_ONESHOT = 0;
-    public static final int STATUS_REVERSE = 1;
-    public static final int STATUS_LOOPTIME = 2;
+    private static final int STATUS_REVERSE = 1;
+    private static final int STATUS_LOOP_TIME = 2;
 
-    protected Object mTag = null;
+    private Object mTag = null;
 
     private int mCurFrame = 0;
     private final Paint mPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
@@ -62,21 +61,17 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     private int mRepeatCount = -1;
     private int mRepeatIndex = 0;
 
-    public AnimQueueDrawable(View v) {
-        mContext = v.getContext();
+    AnimQueueDrawable(View v) {
         mAttachView = v;
-
-        int screenWidth = DisplayUtils.getScreenWidth(mContext);
-        if (screenWidth == 2048 || screenWidth == 1280 || screenWidth == 1024) {
-            mResDir = screenWidth;
-        }
+        mContext = v.getContext();
+        mResDir = mContext.getResources().getInteger(R.integer.resource_dir);
     }
 
-    public void setUpParams(String resName, int frameCount, int repeatMode, int fps) {
+    void setUpParams(String resName, int frameCount, int repeatMode, int fps) {
         setUpParams(resName, frameCount, repeatMode, 0, fps, -1, mCapacity);
     }
 
-    public void setUpParams(String resName, int frameCount, int repeatMode, int interval, int fps, int repeatCount, int capacity) {
+    private void setUpParams(String resName, int frameCount, int repeatMode, int interval, int fps, int repeatCount, int capacity) {
         mResName = mResDir + "/" + resName;
         mFrameCount = frameCount;
         mRepeatMode = repeatMode;
@@ -90,23 +85,17 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         mCurFrame = 0;
         mRunning = false;
         final Resources res = mContext.getResources();
-        mThreadPool.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Bitmap b = BitmapFactory.decodeStream(res.getAssets().open(mResName  + "/" + 0 + ".png"));
-                    mCurrDrawable = new FastBitmapDrawable(b);
-                    mWidth = Math.max(mWidth, b.getWidth());
-                    mHeight = Math.max(mHeight, b.getHeight());
-                    mAttachView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mAttachView.setBackground(AnimQueueDrawable.this);
-                        }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
+        mThreadPool.execute(() -> {
+            try {
+                Bitmap b = BitmapFactory.decodeStream(res.getAssets().open(mResName  + "/" + 0 + ".png"));
+                mCurrDrawable = new FastBitmapDrawable(b);
+                mWidth = Math.max(mWidth, b.getWidth());
+                mHeight = Math.max(mHeight, b.getHeight());
+                if(mAttachView != null){
+                    mAttachView.post(() -> mAttachView.setBackground(AnimQueueDrawable.this));
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
     }
@@ -115,7 +104,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         mAnimationListener = animationListener;
     }
 
-    public void resetLoop(int repeatCount) {
+    void resetLoop(int repeatCount) {
         mRepeatIndex = 0;
         mRepeatCount = repeatCount;
     }
@@ -143,7 +132,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
 
     public void start() {
         mAnimating = true;
-        if (!sLock &&!isRunning()) {
+        if (!isRunning()) {
             mRunning = true;
             mCurFrame = mReverse ? (mFrameCount - 1) : 0;
             nextFrame();
@@ -156,7 +145,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         mRunning = false;
     }
 
-    public void pause() {
+    void pause() {
         mRunning = false;
     }
 
@@ -164,14 +153,14 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         mInflating = true;
     }
 
-    public void resume() {
+    void resume() {
         if (mAnimating && !mRunning) {
             mRunning = true;
             nextFrame();
         }
     }
 
-    public boolean isRunning() {
+    boolean isRunning() {
         return mRunning;
     }
 
@@ -187,40 +176,38 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
 
     private void setCurFrame(int frame, int repeatMode) {
         mCurFrame = frame;
-        if (repeatMode == STATUS_LOOPTIME &&
+        if (repeatMode == STATUS_LOOP_TIME &&
                 mCurFrame == (mFrameCount - 1)) {
             mRepeatIndex++;
         }
     }
 
-    private Drawable playNextDrawable(int index) {
+    private void playNextDrawable(int index) {
         if (mSwapDrawable == null) {
             int offset = (index) % mFrameCount;
             inflate();
             inflateDrawable(offset, false);
-            return null;
+            return;
         }
         mCurrDrawable = mSwapDrawable;
         mSwapDrawable = null;
         invalidateSelf();
-        return null;
     }
 
     private void inflateDrawable(final int index, final boolean sync) {
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                Bitmap bitmap = null;
-                try {
-                    Resources res = mContext.getResources();
-                    bitmap = BitmapFactory.decodeStream(res.getAssets().open(mResName + "/" + index + ".png"));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (bitmap != null) {
-                    Drawable drawable = new FastBitmapDrawable(bitmap);
-                    mSwapDrawable = drawable;
-                    if (!sync) {
+        Runnable r = () -> {
+            Bitmap bitmap = null;
+            try {
+                Resources res = mContext.getResources();
+                bitmap = BitmapFactory.decodeStream(res.getAssets().open(mResName + "/" + index + ".png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (bitmap != null) {
+                mSwapDrawable = new FastBitmapDrawable(bitmap);
+                if (!sync) {
+                    //添加判断，防止mAttachView在使用Destroy方法后仍然使用mAttachView
+                    if(mAttachView != null){
                         mAttachView.post(mAfterInflateRunnable);
                     }
                 }
@@ -234,18 +221,15 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
 
     }
 
-    private Runnable mAfterInflateRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if(mInflating){
-                mInflating = false;
-                nextFrame();
-            }
+    private Runnable mAfterInflateRunnable = () -> {
+        if(mInflating){
+            mInflating = false;
+            nextFrame();
         }
     };
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(@NonNull Canvas canvas) {
         if (mCurrDrawable != null) {
             mCurrDrawable.draw(canvas);
         }
@@ -270,8 +254,8 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         return STATUS_INFINITE == mRepeatMode;
     }
 
-    public boolean isLoopStatus() {
-        return mRepeatMode == STATUS_LOOPTIME && mRepeatIndex < mRepeatCount;
+    private boolean isLoopStatus() {
+        return mRepeatMode == STATUS_LOOP_TIME && mRepeatIndex < mRepeatCount;
     }
 
     private void nextFrame() {
@@ -314,7 +298,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
                     interval = mInterval;
                 }
                 break;
-            case STATUS_LOOPTIME:
+            case STATUS_LOOP_TIME:
                 nextFrame = (mCurFrame + 1) % mFrameCount;
                 if (nextFrame == (mFrameCount - 1)) {
                     interval = mInterval;
@@ -348,7 +332,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     }
 
     public boolean isStatusInfinite() {
-        return STATUS_INFINITE == mRepeatMode || STATUS_LOOPTIME == mRepeatMode;
+        return STATUS_INFINITE == mRepeatMode || STATUS_LOOP_TIME == mRepeatMode;
     }
 
     public void setTag(Object tag) {
@@ -357,5 +341,18 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
 
     public Object getTag() {
         return mTag;
+    }
+
+    public void clear(){
+        stop();
+        if(mAttachView != null && mAfterInflateRunnable != null){
+            mAttachView.removeCallbacks(mAfterInflateRunnable);
+        }
+        if(mAnimationListener != null) {
+            mAnimationListener = null;
+        }
+        mAttachView = null;
+        mCurrDrawable = null;
+
     }
 }

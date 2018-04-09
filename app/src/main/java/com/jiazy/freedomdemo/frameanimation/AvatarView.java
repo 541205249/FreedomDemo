@@ -2,6 +2,7 @@ package com.jiazy.freedomdemo.frameanimation;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 
 import com.jiazy.freedomdemo.frameanimation.anim.AnimQueueView;
@@ -19,6 +20,8 @@ public class AvatarView extends AnimQueueView {
     public static final int STATE_AWAKEN = 0x05;
     private int mCurrentSate = -1;
 
+    private final MyHandler myHandler = new MyHandler();
+
     public AvatarView(Context context) {
         super(context);
         init();
@@ -35,16 +38,23 @@ public class AvatarView extends AnimQueueView {
     }
 
     private void init() {
-        new Handler().post(() -> {
-            setParams("xiaobu_sleep", 91, STATUS_INFINITE, 60);
+
+        myHandler.post(() -> {
+            setParams("xiaobu_sleep", 90, STATUS_INFINITE, 60);
             mDrawable.setAnimationListener(drawable -> {
                 if (mCurrentSate == STATE_RESULT || mCurrentSate == STATE_ERROR) {
                     switchState(STATE_SILENCE);
-                }if (mCurrentSate == STATE_RECOGNIZE) {
+                }else if (mCurrentSate == STATE_RECOGNIZE) {
                     switchState(STATE_RECOGNIZE2);
                 }
             });
         });
+    }
+
+    public void start() {
+        if (mDrawable != null) {
+            mDrawable.start();
+        }
     }
 
     public void stop() {
@@ -57,21 +67,24 @@ public class AvatarView extends AnimQueueView {
         if (mDrawable == null) {
             return;
         }
+        if (mCurrentSate == STATE_SILENCE && state == STATE_RESULT) {
+            return;
+        }
 
         mCurrentSate = state;
         switch (state) {
             case STATE_SILENCE:
-                setParams("xiaobu_sleep", 91, STATUS_INFINITE, 60);
+                setParams("xiaobu_sleep", 90, STATUS_INFINITE, 60);
                 break;
             case STATE_RECOGNIZE:
-                setParams("xiaobu_awaken", 23, STATUS_ONESHOT, 80);
+                setParams("xiaobu_awaken", 23, STATUS_ONESHOT, 60);
                 break;
             case STATE_RECOGNIZE2:
-                setParams("xiaobu_input_search", 53, STATUS_INFINITE, 60);
+                setParams("xiaobu_input_search", 54, STATUS_INFINITE, 60);
                 break;
             case STATE_RESULT:
             case STATE_ERROR:
-                setParams("xiaobu_result", 52, STATUS_ONESHOT, 80);
+                setParams("xiaobu_result", 52, STATUS_ONESHOT, 60);
                 break;
             case STATE_AWAKEN:
                 setParams("xiaobu_awaken", 23, STATUS_ONESHOT, 60);
@@ -79,4 +92,14 @@ public class AvatarView extends AnimQueueView {
         }
     }
 
+    static class MyHandler extends Handler{
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+        }
+    }
+
 }
+
+
