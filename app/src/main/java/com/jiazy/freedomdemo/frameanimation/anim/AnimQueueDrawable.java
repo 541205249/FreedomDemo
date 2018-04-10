@@ -35,10 +35,15 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     private boolean mAnimating;
 
     private Context mContext;
-    private Drawable mCurrDrawable;
-    private Drawable mSwapDrawable;
+    private FastBitmapDrawable mCurrDrawable;
+    private FastBitmapDrawable mSwapDrawable;
+    //用于mCurrDrawable和mSwapDrawable交替使用的判断标志
+    private boolean isUseCurrOption = false;
     private int mWidth, mHeight;
     private boolean mReverse = false;
+    private BitmapFactory.Options mCurrOptions = new BitmapFactory.Options();
+    private BitmapFactory.Options mSwapOptions = new BitmapFactory.Options();
+
 
     private int mCapacity = 2;
     private long mFpsDuration = 1000 / 60;
@@ -87,12 +92,20 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         final Resources res = mContext.getResources();
         mThreadPool.execute(() -> {
             try {
-                Bitmap b = BitmapFactory.decodeStream(res.getAssets().open(mResName  + "/" + 0 + ".png"));
+                Bitmap b = BitmapFactory.decodeStream(res.getAssets().open(mResName  + "/" + 0 + ".png"), null, mCurrOptions);
+                isUseCurrOption = true;
+                if(mCurrOptions.inBitmap == null){
+                    mCurrOptions.inBitmap = b;
+                }
                 mCurrDrawable = new FastBitmapDrawable(b);
                 mWidth = Math.max(mWidth, b.getWidth());
                 mHeight = Math.max(mHeight, b.getHeight());
                 if(mAttachView != null){
-                    mAttachView.post(() -> mAttachView.setBackground(AnimQueueDrawable.this));
+                    mAttachView.post(() -> {
+                        if(mAttachView != null){
+                            mAttachView.setBackground(AnimQueueDrawable.this);
+                        }
+                    });
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -132,6 +145,13 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
 
     public void start() {
         mAnimating = true;
+
+        /* 使用inBitmap的初始化设置条件 */
+        mCurrOptions.inSampleSize = 1;
+        mSwapOptions.inSampleSize = 1;
+        mCurrOptions.inMutable = true;
+        mSwapOptions.inMutable = true;
+
         if (!isRunning()) {
             mRunning = true;
             mCurFrame = mReverse ? (mFrameCount - 1) : 0;
@@ -149,7 +169,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         mRunning = false;
     }
 
-    public void inflate(){
+    private void inflate(){
         mInflating = true;
     }
 
@@ -183,14 +203,13 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     }
 
     private void playNextDrawable(int index) {
-        if (mSwapDrawable == null) {
+        if (mSwapDrawable == null || mCurrDrawable.getBitmap() == mSwapDrawable.getBitmap()) {
             int offset = (index) % mFrameCount;
             inflate();
             inflateDrawable(offset, false);
             return;
         }
-        mCurrDrawable = mSwapDrawable;
-        mSwapDrawable = null;
+        mCurrDrawable.setBitmap(mSwapDrawable.getBitmap());
         invalidateSelf();
     }
 
@@ -199,14 +218,32 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
             Bitmap bitmap = null;
             try {
                 Resources res = mContext.getResources();
-                bitmap = BitmapFactory.decodeStream(res.getAssets().open(mResName + "/" + index + ".png"));
+                //使用inBitmap（以前不再使用的内存）来复用加载下一帧的内存
+                if(isUseCurrOption){
+                    bitmap = BitmapFactory.decodeStream(res.getAssets().open(mResName + "/" + index + ".png"), null,mSwapOptions);
+                    if(mSwapOptions.inBitmap == null){
+                        mSwapOptions.inBitmap = bitmap;
+                    }
+                    isUseCurrOption = false;
+                }else {
+                    bitmap = BitmapFactory.decodeStream(res.getAssets().open(mResName + "/" + index + ".png"), null,mCurrOptions);
+                    if(mCurrOptions.inBitmap == null){
+                        mCurrOptions.inBitmap = bitmap;
+                    }
+                    isUseCurrOption = true;
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
             if (bitmap != null) {
-                mSwapDrawable = new FastBitmapDrawable(bitmap);
+                if(mSwapDrawable == null){
+                    mSwapDrawable = new FastBitmapDrawable(bitmap);
+                }else {
+                    mSwapDrawable.setBitmap(bitmap);
+                }
                 if (!sync) {
-                    //添加判断，防止mAttachView在使用Destroy方法后仍然使用mAttachView
+                    //添加判断，防止mAttachView在使用clear方法后仍然使用mAttachView
                     if(mAttachView != null){
                         mAttachView.post(mAfterInflateRunnable);
                     }
@@ -273,8 +310,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
                         mAnimationListener.animationEnd(this);
                     }
                     inflateDrawable(nextFrame, true);
-                    mCurrDrawable = mSwapDrawable;
-                    mSwapDrawable = null;
+                    mCurrDrawable.setBitmap(mSwapDrawable.getBitmap());
                     invalidateSelf();
                     pause();
                     mReverse = (nextFrame != 0);
@@ -308,8 +344,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
                         mAnimationListener.animationEnd(this);
                     }
                     inflateDrawable(nextFrame, true);
-                    mCurrDrawable = mSwapDrawable;
-                    mSwapDrawable = null;
+                    mCurrDrawable.setBitmap(mSwapDrawable.getBitmap());
                     mCurFrame = nextFrame;
                     invalidateSelf();
                     stop();
