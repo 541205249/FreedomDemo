@@ -276,7 +276,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     public void draw(@NonNull Canvas canvas) {
         if (mCurrDrawable != null) {
             mCurrDrawable.draw(canvas);
-            // 若有播放特定帧回调 
+            // 若有播放特定帧回调
             if(mAnimationListener != null &&
                     isSetSpecificFrame &&
                     mCurFrame == mSpecificFrame){
