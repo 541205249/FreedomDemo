@@ -11,6 +11,7 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 
 import com.jiazy.freedomdemo.R;
@@ -18,6 +19,7 @@ import com.jiazy.freedomdemo.R;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 
 public class AnimQueueDrawable extends Drawable implements Runnable {
 
@@ -33,6 +35,8 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     private boolean mRunning;
     private boolean mInflating = false;
     private boolean mAnimating;
+    private int mSpecificFrame = 0;
+    private boolean isSetSpecificFrame = false;
 
     private Context mContext;
     private FastBitmapDrawable mCurrDrawable;
@@ -59,6 +63,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
 
     public interface AnimationListener {
         void animationEnd(AnimQueueDrawable drawable);
+        void afterPlaySpecificFrame();
     }
 
     private int mRepeatMode = STATUS_ONESHOT;
@@ -246,9 +251,11 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
                     //添加判断，防止mAttachView在使用clear方法后仍然使用mAttachView
                     if(mAttachView != null){
                         mAttachView.post(mAfterInflateRunnable);
+
                     }
                 }
             }
+
         };
         if (sync) {
             r.run();
@@ -269,10 +276,25 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     public void draw(@NonNull Canvas canvas) {
         if (mCurrDrawable != null) {
             mCurrDrawable.draw(canvas);
+            // 若有播放特定帧回调
+            if(mAnimationListener != null &&
+                    isSetSpecificFrame &&
+                    mCurFrame == mSpecificFrame){
+                mAnimationListener.afterPlaySpecificFrame();
+            }
         }
         if ((isInfiniteStatus() || isLoopStatus()) && !mAnimating) {
             start();
         }
+    }
+
+    public void setPlaySpecificFrame(int specificFrame){
+        mSpecificFrame = specificFrame;
+        isSetSpecificFrame = true;
+    }
+
+    public void cancelPlaySpecificFrame(){
+        isSetSpecificFrame = false;
     }
 
     @Override
@@ -390,4 +412,6 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         mCurrDrawable = null;
 
     }
+
+
 }
