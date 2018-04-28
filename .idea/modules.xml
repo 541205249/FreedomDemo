@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/FreedomDemo.iml" filepath="$PROJECT_DIR$/.idea/FreedomDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FreedomDemo.iml" filepath="$PROJECT_DIR$/FreedomDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/xiaobu_awaken_21"
+        android:layout_gravity="left"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/xiaobu_awaken_20"
+        android:layout_gravity="right"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/xiaobu_awaken_19"
+        android:layout_gravity="bottom"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/xiaobu_result_00"
+        android:layout_gravity="right"/>
+
+    <Button
+        android:id="@+id/btn_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="result"/>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ff00dede"
+        android:layout_gravity="center"
+        android:layout_marginBottom="83px"
+        android:layout_marginEnd="10px"
+        android:layout_marginStart="10px"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+    </FrameLayout>
+
+    <com.jiazy.freedomdemo.frameanimation.AvatarView
+        android:id="@+id/img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
+    <com.jiazy.freedomdemo.frameanimation.SnowManView
+        android:id="@+id/snowman_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"/>
+
+
+
+
+
+</FrameLayout>

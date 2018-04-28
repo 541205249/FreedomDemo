@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.jakewharton.hugo'
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
@@ -52,4 +52,6 @@ dependencies {
     testCompile bfcBuildConfig.deps["bfc-leakcanary-no-op"]
 
     compile 'com.airbnb.android:lottie:2.3.0'
+
+
 }

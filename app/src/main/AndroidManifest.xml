@@ -28,6 +28,7 @@
         <activity android:name=".frameanimation.FastBitmapAnimActivity" />
         <activity android:name=".retrofit.RetrofitActivity" />
         <activity android:name=".lottie.LottieActivity"></activity>
+        <activity android:name=".frameanimation.PropertyAnimationActivity"></activity>
     </application>
 
 </manifest>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.jiazy.freedomdemo.frameanimation.anim.AnimQueueDrawable;
 import com.jiazy.freedomdemo.frameanimation.anim.AnimQueueView;
@@ -20,7 +21,6 @@ public class AvatarView extends AnimQueueView implements AnimQueueDrawable.Anima
     public static final int STATE_ERROR = 0x04;
     public static final int STATE_AWAKEN = 0x05;
     private int mCurrentSate = -1;
-
     private final MyHandler myHandler = new MyHandler();
 
     private AvatarViewListener mAvatarViewListener;
@@ -49,10 +49,16 @@ public class AvatarView extends AnimQueueView implements AnimQueueDrawable.Anima
 
     private void init() {
 
-        myHandler.post(() -> {
-            setParams("xiaobu_sleep", 90, STATUS_INFINITE, 60);
-            mDrawable.setAnimationListener(this);
-        });
+        setParams("xiaobu_sleep", 90, STATUS_INFINITE, 60);
+        mDrawable.setAnimationListener(this);
+//        mDrawable.start();
+
+//        myHandler.post(() -> {
+//            setParams("xiaobu_sleep", 90, STATUS_INFINITE, 60);
+//            mDrawable.setAnimationListener(this);
+//            mDrawable.start();
+//            Log.i("zzx", "Avatarview start");
+//        });
     }
 
     public void start() {
@@ -71,10 +77,12 @@ public class AvatarView extends AnimQueueView implements AnimQueueDrawable.Anima
         if (mDrawable == null) {
             return;
         }
-        
-        if (mCurrentSate == STATE_SILENCE && state == STATE_RESULT) {
-            return;
-        }
+
+//        //TODO 测试注释，用后复原
+//
+//        if (mCurrentSate == STATE_SILENCE && state == STATE_RESULT) {
+//            return;
+//        }
 
         mCurrentSate = state;
         switch (state) {

@@ -91,6 +91,7 @@ public class FastBitmapDrawable extends Drawable {
         } else {
             mWidth = mHeight = 0;
         }
+
     }
 
     public Bitmap getBitmap() {

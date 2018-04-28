@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.jiazy.freedomdemo.excel.TestExcelActivity;
 import com.jiazy.freedomdemo.frameanimation.FastBitmapAnimActivity;
+import com.jiazy.freedomdemo.frameanimation.PropertyAnimationActivity;
 import com.jiazy.freedomdemo.lottie.LottieActivity;
 import com.jiazy.freedomdemo.retrofit.RetrofitActivity;
 
@@ -34,6 +35,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.btn_retrofit:
                 intent.setClass(this, RetrofitActivity.class);
+                break;
+            case R.id.btn_property_ainm:
+                intent.setClass(this, PropertyAnimationActivity.class);
                 break;
             default:
                 intent.setClass(this, TestExcelActivity.class);

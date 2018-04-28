@@ -9,6 +9,7 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -19,9 +20,14 @@ import com.jiazy.freedomdemo.R;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
+
+import hugo.weaving.DebugLog;
 
 
 public class AnimQueueDrawable extends Drawable implements Runnable {
+
+    private static final String TAG = "AnimQueueDrawable";
 
     public static final int STATUS_INFINITE = -1;
     public static final int STATUS_ONESHOT = 0;
@@ -55,6 +61,8 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     private String mResName;
     private int mResDir = 1280;
     private int mFrameCount = mCapacity;
+    private long mLastTimeDraw = 0;
+    private long mThisTimeDraw = 0;
 //    ArrayDeque<Drawable> mQueue = new ArrayDeque<Drawable>(mCapacity);
 
     private AnimationListener mAnimationListener;
@@ -71,9 +79,18 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     private int mRepeatCount = -1;
     private int mRepeatIndex = 0;
 
+
     AnimQueueDrawable(View v) {
+
+        /* 使用inBitmap的初始化设置条件 */
+        mCurrOptions.inSampleSize = 1;
+        mSwapOptions.inSampleSize = 1;
+        mCurrOptions.inMutable = true;
+        mSwapOptions.inMutable = true;
+
         mAttachView = v;
-        mContext = v.getContext();
+        //TODO 疑是内存泄漏
+        mContext = v.getContext().getApplicationContext();
         mResDir = mContext.getResources().getInteger(R.integer.resource_dir);
     }
 
@@ -105,6 +122,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
                 mCurrDrawable = new FastBitmapDrawable(b);
                 mWidth = Math.max(mWidth, b.getWidth());
                 mHeight = Math.max(mHeight, b.getHeight());
+
                 if(mAttachView != null){
                     mAttachView.post(() -> {
                         if(mAttachView != null){
@@ -150,12 +168,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
 
     public void start() {
         mAnimating = true;
-
-        /* 使用inBitmap的初始化设置条件 */
-        mCurrOptions.inSampleSize = 1;
-        mSwapOptions.inSampleSize = 1;
-        mCurrOptions.inMutable = true;
-        mSwapOptions.inMutable = true;
+        mLastTimeDraw = 0;
 
         if (!isRunning()) {
             mRunning = true;
@@ -208,7 +221,12 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     }
 
     private void playNextDrawable(int index) {
-        if (mSwapDrawable == null || mCurrDrawable.getBitmap() == mSwapDrawable.getBitmap()) {
+        if (mSwapDrawable == null) {
+            int offset = (index) % mFrameCount;
+            inflate();
+            inflateDrawable(offset, false);
+            return;
+        }else if(mCurrDrawable.getBitmap() == mSwapDrawable.getBitmap()){
             int offset = (index) % mFrameCount;
             inflate();
             inflateDrawable(offset, false);
@@ -216,6 +234,12 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         }
         mCurrDrawable.setBitmap(mSwapDrawable.getBitmap());
         invalidateSelf();
+        // 若有播放特定帧回调
+        if(mAnimationListener != null &&
+                isSetSpecificFrame &&
+                mCurFrame == mSpecificFrame){
+            mAnimationListener.afterPlaySpecificFrame();
+        }
     }
 
     private void inflateDrawable(final int index, final boolean sync) {
@@ -237,7 +261,6 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
                     }
                     isUseCurrOption = true;
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -250,8 +273,8 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
                 if (!sync) {
                     //添加判断，防止mAttachView在使用clear方法后仍然使用mAttachView
                     if(mAttachView != null){
+                        Log.i(TAG, "此时Post到inflateDrawable"+mResName+mCurFrame);
                         mAttachView.post(mAfterInflateRunnable);
-
                     }
                 }
             }
@@ -266,22 +289,26 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     }
 
     private Runnable mAfterInflateRunnable = () -> {
-        if(mInflating){
-            mInflating = false;
-            nextFrame();
+
+        debuglogFun(mResName, "mAfterInflateRunnable"+mCurFrame);
+        if(isRunning()){
+            if(mInflating){
+                mInflating = false;
+                nextFrame();
+            }
         }
+
     };
+
+    @DebugLog
+    private void  debuglogFun(String id, String description){
+
+    }
 
     @Override
     public void draw(@NonNull Canvas canvas) {
         if (mCurrDrawable != null) {
             mCurrDrawable.draw(canvas);
-            // 若有播放特定帧回调
-            if(mAnimationListener != null &&
-                    isSetSpecificFrame &&
-                    mCurFrame == mSpecificFrame){
-                mAnimationListener.afterPlaySpecificFrame();
-            }
         }
         if ((isInfiniteStatus() || isLoopStatus()) && !mAnimating) {
             start();
@@ -408,8 +435,11 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         if(mAnimationListener != null) {
             mAnimationListener = null;
         }
+        mThreadPool.shutdownNow();
         mAttachView = null;
-        mCurrDrawable = null;
+
+//        mContext = null;
+//        mCurrDrawable = null;
 
     }
 
