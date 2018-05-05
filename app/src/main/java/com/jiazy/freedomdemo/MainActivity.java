@@ -6,9 +6,10 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.jiazy.freedomdemo.excel.TestExcelActivity;
-import com.jiazy.freedomdemo.frameanimation.FastBitmapAnimActivity;
+import com.jiazy.freedomdemo.frameanim.FastBitmapAnimActivity;
 import com.jiazy.freedomdemo.lottie.LottieActivity;
 import com.jiazy.freedomdemo.retrofit.RetrofitActivity;
+import com.jiazy.freedomdemo.svga.SVGAActivity;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
@@ -34,6 +35,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.btn_retrofit:
                 intent.setClass(this, RetrofitActivity.class);
+                break;
+            case R.id.btn_svga:
+                intent.setClass(this, SVGAActivity.class);
                 break;
             default:
                 intent.setClass(this, TestExcelActivity.class);

@@ -19,6 +19,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://jitpack.io' }
         // 配置BFC各版本的仓库地址
         maven { url bfcBuildConfig.MAVEN_URL }
         // Bfc项目的灰度仓库

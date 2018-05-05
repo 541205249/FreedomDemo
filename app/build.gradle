@@ -52,4 +52,6 @@ dependencies {
     testCompile bfcBuildConfig.deps["bfc-leakcanary-no-op"]
 
     compile 'com.airbnb.android:lottie:2.3.0'
+
+    compile 'com.github.yyued:SVGAPlayer-Android:2.1.1'
 }
