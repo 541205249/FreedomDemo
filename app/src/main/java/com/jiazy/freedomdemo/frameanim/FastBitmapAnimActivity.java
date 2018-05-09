@@ -27,6 +27,9 @@ public class FastBitmapAnimActivity extends Activity {
 
         findViewById(R.id.btn_awaken).setOnClickListener(v -> mAvatarView.switchState(AvatarView.STATE_AWAKEN));
 
+        findViewById(R.id.btn_oula).setOnClickListener(v -> mAvatarView.switchState(AvatarView.STATE_OULA));
+
+        findViewById(R.id.btn_baoxiang).setOnClickListener(v -> mAvatarView.switchState(AvatarView.STATE_BAOXIANG));
     }
 
 }

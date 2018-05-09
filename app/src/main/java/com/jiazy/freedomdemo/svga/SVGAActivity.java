@@ -17,7 +17,7 @@ public class SVGAActivity extends Activity {
         SVGAImageView svgaImageView = findViewById(R.id.svga_view);
 
         findViewById(R.id.btn).setOnClickListener(v -> {
-            svgaImageView.startAnimation();
+            svgaImageView.stopAnimation();
         });
     }
 

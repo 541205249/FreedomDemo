@@ -85,11 +85,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         return context;
     }
 
-    void setUpParams(String resName, int frameCount, int repeatMode, int startInterval, int endInterval, int fps) {
-        setUpParams(resName, frameCount, repeatMode,startInterval, endInterval, fps, -1, mCapacity);
-    }
-
-    private void setUpParams(String resName, int frameCount, int repeatMode, int startInterval, int endInterval, int fps, int repeatCount, int capacity) {
+    void setUpParams(String resName, int frameCount, int repeatMode, int startInterval, int endInterval, int fps, int repeatCount) {
         mResName = resName;
         mFrameCount = frameCount;
         mRepeatMode = repeatMode;
@@ -97,7 +93,6 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         mEndInterval = endInterval;
         mFpsDuration = 1000/fps;
         mRepeatCount = repeatCount;
-        mCapacity = capacity;
         mRepeatIndex = 0;
         mCurFrame = 0;
         mRunning = false;
@@ -154,7 +149,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
         return mHeight;
     }
 
-    public void start() {
+    void execute() {
         if (!isRunning()) {
             mRunning = true;
             mCurFrame = mReverse ? (mFrameCount - 1) : 0;
@@ -169,10 +164,6 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
 
     void pause() {
         mRunning = false;
-    }
-
-    private void inflate(){
-        mInflating = true;
     }
 
     void resume() {
@@ -197,8 +188,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
 
     private void setCurFrame(int frame, int repeatMode) {
         mCurFrame = frame;
-        if (repeatMode == STATUS_LOOP_TIME &&
-                mCurFrame == (mFrameCount - 1)) {
+        if (repeatMode == STATUS_LOOP_TIME && mCurFrame == (mFrameCount - 1)) {
             mRepeatIndex++;
         }
     }
@@ -206,7 +196,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     private void playNextDrawable(int index) {
         if (mSwapDrawable == null || mCurrDrawable == null || mCurrDrawable.getBitmap() == mSwapDrawable.getBitmap()) {
             int offset = (index) % mFrameCount;
-            inflate();
+            mInflating = true;
             inflateDrawable(offset, false);
             return;
         }
@@ -280,7 +270,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
             mCurrDrawable.draw(canvas);
         }
         if ((isInfiniteStatus() || isLoopStatus()) && isRunning()) {
-            start();
+            execute();
         }
     }
 
@@ -306,7 +296,7 @@ public class AnimQueueDrawable extends Drawable implements Runnable {
     }
 
     private boolean isInfiniteStatus() {
-        return STATUS_INFINITE == mRepeatMode;
+        return mRepeatMode == STATUS_INFINITE;
     }
 
     private boolean isLoopStatus() {

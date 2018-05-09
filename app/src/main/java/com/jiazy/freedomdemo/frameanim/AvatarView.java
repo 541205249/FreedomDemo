@@ -19,11 +19,14 @@ public class AvatarView extends AnimQueueView implements AnimQueueDrawable.Anima
     public static final int STATE_RESULT = 0x03;
     public static final int STATE_ERROR = 0x04;
     public static final int STATE_AWAKEN = 0x05;
+    public static final int STATE_OULA = 0x06;
+    public static final int STATE_BAOXIANG = 0x07;
 
     private static final int XIAOBU_AWAKEN_COUNT = 23;
     private static final int XIAOBU_INPUT_SEARCH_COUNT = 54;
     private static final int XIAOBU_RESULT_COUNT = 36;
     private static final int XIAOBU_SLEEP_COUNT = 89;
+    private static final int OULA_COUNT = 205;
 
     private static int FPS = 45;
 
@@ -54,6 +57,7 @@ public class AvatarView extends AnimQueueView implements AnimQueueDrawable.Anima
         setFPS();
         setParams("xiaobu_sleep", XIAOBU_SLEEP_COUNT, STATUS_INFINITE, FPS);
         mDrawable.setAnimationListener(this);
+        start();
     }
 
     private void setFPS() {
@@ -66,18 +70,6 @@ public class AvatarView extends AnimQueueView implements AnimQueueDrawable.Anima
             case 2048:
                 FPS = 60;
                 break;
-        }
-    }
-
-    public void start() {
-        if (mDrawable != null) {
-            mDrawable.start();
-        }
-    }
-
-    public void stop() {
-        if (mDrawable != null) {
-            mDrawable.stop();
         }
     }
 
@@ -112,7 +104,16 @@ public class AvatarView extends AnimQueueView implements AnimQueueDrawable.Anima
                 setClickable(true);
                 setParams("xiaobu_awaken", XIAOBU_AWAKEN_COUNT, STATUS_ONESHOT, FPS);
                 break;
+            case STATE_OULA:
+                setClickable(true);
+                setParams("oula", OULA_COUNT, STATUS_INFINITE, 40);
+                break;
+            case STATE_BAOXIANG:
+                setClickable(true);
+                setParams("baoxiang", 98, STATUS_INFINITE, 50);
+                break;
         }
+        start();
     }
 
     @Override

@@ -10,11 +10,12 @@ public class AnimQueueView extends IrregularImageView {
     private String mResName;
     private int mFrameCount;
     private int mRepeatMode;
+    private int mRepeatCount = -1;
     private int mStartInterval = 0;
     private int mEndInterval = 0;
     private int mFPS;
     private boolean isAttached = false;
-    private boolean isSetParams = false;
+    private boolean isStartedButFailed = false;
 
     public AnimQueueView(Context context) {
         super(context);
@@ -29,21 +30,19 @@ public class AnimQueueView extends IrregularImageView {
     }
 
     public void setParams(String resName, int frameCount, int repeatMode, int fps) {
-
         mResName = resName;
         mFrameCount = frameCount;
         mRepeatMode = repeatMode;
         mFPS = fps;
-        isSetParams = true;
 
-        if (mDrawable == null) {
-            mDrawable = new AnimQueueDrawable(this);
-        }
+        setDrawable();
+    }
 
-        //防止在没有attachedView时进行view的操作
-        if(isAttached){
-            loadViewParams();
-        }
+    public void setParams(String resName, int frameCount, int repeatMode, int repeatCount, int startInterval, int endInterval, int fps) {
+        mStartInterval = startInterval;
+        mEndInterval = endInterval;
+        mRepeatCount = repeatCount;
+        setParams(resName, frameCount, repeatMode, fps);
     }
 
     public void setParams(String resName, int frameCount, int repeatMode,int startInterval, int endInterval, int fps) {
@@ -52,21 +51,10 @@ public class AnimQueueView extends IrregularImageView {
         setParams(resName, frameCount, repeatMode, fps);
     }
 
-    public void setParams(String resName, int frameCount, int repeatMode,int startInterval, int fps) {
+    public void setParams(String resName, int frameCount, int repeatMode, int startInterval, int fps) {
         mStartInterval = startInterval;
         mEndInterval = 0;
         setParams(resName, frameCount, repeatMode, fps);
-    }
-
-    private void loadViewParams(){
-        if(isAttached && isSetParams){
-            //避免launcher没有实例化mDrawable
-            if (mDrawable == null) {
-                mDrawable = new AnimQueueDrawable(this);
-            }
-            mDrawable.setUpParams(mResName, mFrameCount, mRepeatMode, mStartInterval, mEndInterval, mFPS);
-            mDrawable.start();
-        }
     }
 
     @Override
@@ -83,7 +71,10 @@ public class AnimQueueView extends IrregularImageView {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         isAttached = true;
-        loadViewParams();
+        if (isStartedButFailed) {
+            setDrawable();
+            start();
+        }
     }
 
     public boolean isRunning() {
@@ -91,9 +82,19 @@ public class AnimQueueView extends IrregularImageView {
     }
 
     public void start() {
-        if (mDrawable != null) {
-            mDrawable.start();
+        //防止在没有attachedView时进行view的操作
+        if(isAttached && mDrawable != null){
+            mDrawable.execute();
+        } else {
+            isStartedButFailed = true;
         }
+    }
+
+    private void setDrawable() {
+        if (mDrawable == null) {
+            mDrawable = new AnimQueueDrawable(this);
+        }
+        mDrawable.setUpParams(mResName, mFrameCount, mRepeatMode,  mStartInterval, mEndInterval, mFPS, mRepeatCount);
     }
 
     public void stop() {

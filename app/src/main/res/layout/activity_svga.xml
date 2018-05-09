@@ -16,7 +16,6 @@
         android:id="@+id/svga_view"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        app:source="svga_png.svga"
-        app:autoPlay="false"
-        android:background="#000" />
+        app:source="baoxiang.svga"
+        app:autoPlay="true" />
 </LinearLayout>
