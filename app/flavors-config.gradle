@@ -1,0 +1,54 @@
+android {
+
+    defaultConfig {
+        flavorDimensions("version", "screen_size")
+    }
+
+    productFlavors {
+        _2048x1536 {
+            dimension "screen_size"
+        }
+        _1280x800 {
+            dimension "screen_size"
+        }
+
+
+        // 集成到系统的版本
+        system {
+            dimension "version"
+            buildConfigField "boolean", "DEBUG_MODE", "false"
+            buildConfigField "boolean", "MONKEY_MODE", "false"
+        }
+        // 单独提测
+        update {
+            dimension "version"
+            buildConfigField "boolean", "DEBUG_MODE", "true"
+            buildConfigField "boolean", "MONKEY_MODE", "false"
+        }
+
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def appName = 'FreedomDemo'
+            if (variant.flavorName.contains("system") && variant.signingConfig.name == "release") {
+                //系统版本的release安装包放在apk/width/ 文件夹下
+                def fileName = appName + ".apk"
+                def screenSize
+                if (variant.flavorName.contains("2048")) {
+                    screenSize = 2048
+                } else {
+                    screenSize = 1280
+                }
+                def fileDir = "../../../../../../apk/" + screenSize
+                output.outputFileName = new File(fileDir, fileName)
+
+            } else {
+                //其他的安装包放在apk/versionName/ 文件夹下
+                def fileName = appName + "-" + variant.flavorName + "-" + variant.signingConfig.name + ".apk"
+                def fileDir = "../../../../../../apk/" +  android.defaultConfig.versionName
+                output.outputFileName = new File(fileDir, fileName)
+            }
+        }
+    }
+}
